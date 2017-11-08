@@ -10,23 +10,25 @@
     tools:context="edu.scd.csumb.projectgearup.MainActivity">
 
     <EditText
-        android:id="@+id/editText1"
+        android:id="@+id/etUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/etPassword"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/etPassword"
+        android:layout_marginTop="104dp"
         android:alpha="1"
         android:ems="10"
-        android:hint="Student ID"
-        android:inputType="number"
+        android:hint="Login ID"
+        android:inputType="text"
         android:textStyle="bold"
         tools:layout_editor_absoluteX="84dp"
-        tools:layout_editor_absoluteY="170dp"
-        android:layout_marginTop="104dp"
-        android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/editText2"
-        android:layout_alignStart="@+id/editText2" />
+        tools:layout_editor_absoluteY="170dp" />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/etPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -35,9 +37,20 @@
         android:textStyle="bold"
         tools:layout_editor_absoluteX="84dp"
         tools:layout_editor_absoluteY="267dp"
-        android:layout_below="@+id/editText1"
+        android:layout_below="@+id/etUserName"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="64dp"
-        android:layout_marginEnd="64dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:id="@+id/bLogin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/etPassword"
+        android:text="Login" />
 </RelativeLayout>
