@@ -1,15 +1,39 @@
 package edu.scd.csumb.projectgearup;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Base64;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.apache.http.params.HttpParams;
+
+import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 
 public class UserAreaActivity extends AppCompatActivity implements View.OnClickListener{
     private static final int RESULT_LOAD_IMAGE = 1;
@@ -36,8 +60,12 @@ public class UserAreaActivity extends AppCompatActivity implements View.OnClickL
         welcomeMess.setText(message);
         etUsername.setText(username);
 
-        //imageToUpload.setOnClickListener(this);
-        //bUploadImage.setOnClickListener(this); not work
+        imageToUpload = (ImageView) findViewById(R.id.imageToUpload) ;
+        bUploadImage = (Button) findViewById(R.id.bUploadImage);
+
+        uploadImageName = (EditText) findViewById(R.id.etUploadName);
+        imageToUpload.setOnClickListener(this);
+        bUploadImage.setOnClickListener(this);
     }
 
     @Override
@@ -48,7 +76,8 @@ public class UserAreaActivity extends AppCompatActivity implements View.OnClickL
             startActivityForResult(galleryIntent,RESULT_LOAD_IMAGE);
             break;
         case R.id.bUploadImage:
-
+            Bitmap image = ((BitmapDrawable) imageToUpload.getDrawable()).getBitmap();
+            new UploadImage(image, uploadImageName.getText().toString()).execute();
             break;
 
     }
@@ -64,4 +93,83 @@ public class UserAreaActivity extends AppCompatActivity implements View.OnClickL
 
         }
     }
+
+
+    private class UploadImage extends AsyncTask<Void,Void, Void>{
+
+        Bitmap image;
+        String name;
+        public UploadImage(Bitmap image, String name){
+            this.image = image;
+            this.name = name;
+        }
+        @Override
+        protected Void doInBackground(Void... voids) {
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            String encodedImage = Base64.encodeToString(byteArrayOutputStream.toByteArray(), Base64.DEFAULT);
+
+
+//            ArrayList<Pair> dataToSend = new ArrayList<Pair>();
+//            Pair pair = new Pair();
+//            pair.setX("image");
+//            pair.setY(encodedImage);
+//            dataToSend.add(pair);
+//
+//            pair.setX("name");
+//            pair.setY(name);
+//            dataToSend.add(pair);
+
+            String urlParameters  =   "image="+ encodedImage + "&name="+ name;
+
+
+            byte[] postData = urlParameters.getBytes( Charset.forName("UTF-8") );
+            int postDataLength = postData.length;
+            String request = "http://obtuse-angular-over.000webhostapp.com/SavePicture.php";
+            URL url = null;
+            try {
+                url = new URL( request );
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+            HttpURLConnection conn= null;
+            try {
+                conn = (HttpURLConnection) url.openConnection();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(false);
+            try {
+                conn.setRequestMethod("POST");
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            }
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("charset", "utf-8");
+            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength ));
+            conn.setUseCaches(false);
+
+            DataOutputStream wr = null;
+            try {
+                wr =  new DataOutputStream(conn.getOutputStream());
+                wr.write( postData );
+            }
+            catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(getApplicationContext(), "Image Uploaded", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
 }
