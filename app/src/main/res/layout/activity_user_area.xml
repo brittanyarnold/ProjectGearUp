@@ -42,13 +42,20 @@
 
 
         <ImageView
-            android:id="@+id/imageToUpload"
-            android:layout_width="150dp"
-            android:layout_height="150dp" />
+            android:id="@+id/imageUpload"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
         <EditText
             android:id="@+id/etUploadName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/btnChoose"
+            android:text="Choose"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#3b54e2"
+            android:textColor="#fff"/>
         <Button
             android:id="@+id/bUploadImage"
             android:text="Upload Image"
